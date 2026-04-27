@@ -915,6 +915,7 @@ section { margin-top: 36px; }
 .map__address {
   font-family: var(--font-display);
   font-size: 15px;
+  font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--light-text-primary);
 }
