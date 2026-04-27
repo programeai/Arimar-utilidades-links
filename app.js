@@ -228,8 +228,8 @@ function updateMap() {
 
 /* ---------- 5. HOURS ---------- */
 const schedule = [
-  { day: "Segunda a Sexta", hours: "08h — 18h", days: [1, 2, 3, 4, 5], openingMin: 8 * 60, closingMin: 18 * 60 },
-  { day: "Sábado",          hours: "08h — 17h", days: [6],             openingMin: 8 * 60, closingMin: 17 * 60 },
+  { day: "Segunda a Sexta", hours: "07h30 — 18h", days: [1, 2, 3, 4, 5], openingMin: 7 * 60 + 30, closingMin: 18 * 60 },
+  { day: "Sábado",          hours: "07h30 — 16h", days: [6],             openingMin: 7 * 60 + 30, closingMin: 16 * 60 },
   { day: "Domingo",         hours: "Fechado",   days: [0],             openingMin: null,    closingMin: null   },
 ];
 
@@ -260,10 +260,29 @@ function renderStatus() {
   const labelEl = document.getElementById("hero-status-label");
   const hoursEl = document.getElementById("hero-status-hours");
 
+  function getNextOpeningInfo(fromDay) {
+    for (let offset = 1; offset <= 7; offset++) {
+      const targetDay = (fromDay + offset) % 7;
+      const nextSched = schedule.find(s => s.days.includes(targetDay) && s.openingMin != null);
+      if (nextSched) {
+        return { offset, targetDay, nextSched };
+      }
+    }
+    return null;
+  }
+
   if (!todaySched || todaySched.openingMin == null) {
     statusEl.classList.add("is-closed");
     labelEl.textContent = "Fechado hoje";
-    hoursEl.textContent = "abre segunda às 8h";
+    const nextOpening = getNextOpeningInfo(day);
+    if (nextOpening) {
+      const openH = Math.floor(nextOpening.nextSched.openingMin / 60);
+      const openM = nextOpening.nextSched.openingMin % 60;
+      const openTime = openM === 0 ? `${openH}h` : `${openH}h${String(openM).padStart(2, "0")}`;
+      hoursEl.textContent = `Abre ${nextOpening.nextSched.day.split(" ")[0].toLowerCase()} às ${openTime}`;
+    } else {
+      hoursEl.textContent = "sem horário disponível";
+    }
     return;
   }
   if (min >= todaySched.openingMin && min < todaySched.closingMin) {
@@ -278,7 +297,19 @@ function renderStatus() {
       const openH = Math.floor(todaySched.openingMin / 60);
       hoursEl.textContent = `abre às ${openH}h`;
     } else {
-      hoursEl.textContent = "abre amanhã";
+      const nextOpening = getNextOpeningInfo(day);
+      if (nextOpening) {
+        const openH = Math.floor(nextOpening.nextSched.openingMin / 60);
+        const openM = nextOpening.nextSched.openingMin % 60;
+        const openTime = openM === 0 ? `${openH}h` : `${openH}h${String(openM).padStart(2, "0")}`;
+        if (nextOpening.offset === 1) {
+          hoursEl.textContent = `abre amanhã às ${openTime}`;
+        } else {
+          hoursEl.textContent = `abre ${nextOpening.nextSched.day.split(" ")[0].toLowerCase()} às ${openTime}`;
+        }
+      } else {
+        hoursEl.textContent = "sem horário disponível";
+      }
     }
   }
 }
