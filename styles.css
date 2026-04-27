@@ -18,11 +18,11 @@
   --c-service: #F4B324;
   --c-hospitality: #2D6CDF;
 
-  --r-sm: 8px;
-  --r-md: 14px;
-  --r-lg: 20px;
-  --r-xl: 28px;
-  --r-2xl: 36px;
+  --r-sm: 6px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 22px;
+  --r-2xl: 30px;
 
   --shadow-card: 0 14px 40px -16px rgba(0,0,0,0.55), 0 2px 6px rgba(0,0,0,0.25);
 
@@ -122,6 +122,55 @@ section { margin-top: 36px; }
   font-size: 13px;
   color: rgba(255,255,255,0.55);
   font-weight: 500;
+}
+
+.v2-clean-head .section-head {
+  justify-content: center;
+  margin-bottom: 18px;
+  padding: 0;
+}
+
+.v2-clean-head .section-head__num,
+.v2-clean-head .section-head__sub {
+  display: none;
+}
+
+.v2-clean-head .section-head__title {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: rgba(248, 92, 0, 0.62);
+}
+
+.v2-clean-head .section-head__title::before {
+  content: "";
+  width: 36px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, rgba(248, 92, 0, 0.35), rgba(248, 92, 0, 0.9));
+}
+
+.v2-clean-head .section-head__title::after {
+  content: "";
+  width: 24px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, rgba(248, 92, 0, 0.9), rgba(248, 92, 0, 0.35));
+}
+
+/* ============ V2 LINK CARDS (icon-only tweak) ============ */
+.v2-clean-head .cat__icon {
+  width: 46px;
+  height: 46px;
+}
+
+.v2-clean-head .cat__icon svg {
+  width: 22px;
+  height: 22px;
 }
 
 /* ============ HERO ============ */
