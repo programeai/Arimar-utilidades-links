@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="styles.css">
 </head>
-<body class="v2-clean-head">
+<body>
 
 <!-- Background ornaments -->
 <div class="bg-grid" aria-hidden="true"></div>
@@ -43,7 +43,15 @@
       <span class="hero__status-pulse"></span>
       <strong id="hero-status-label">Aberto agora</strong>
       <span class="hero__status-sep">·</span>
-      <span id="hero-status-hours">Fecha às 18h</span>
+      <span id="hero-status-hours">fecha às 18h</span>
+    </div>
+
+    <!-- Marquee -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__track">
+        <span>★ 3 LOJAS EM RUSSAS</span><span>★ ENTREGA RÁPIDA</span><span>★ ATENDIMENTO POR WHATSAPP</span><span>★ PROMOÇÕES TODA SEMANA</span>
+        <span>★ 3 LOJAS EM RUSSAS</span><span>★ ENTREGA RÁPIDA</span><span>★ ATENDIMENTO POR WHATSAPP</span><span>★ PROMOÇÕES TODA SEMANA</span>
+      </div>
     </div>
   </header>
 
@@ -64,7 +72,7 @@
       <div class="vip__text">
         <div class="vip__eyebrow">Grupo VIP no WhatsApp</div>
         <div class="vip__title">Ofertas em primeira mão</div>
-        <div class="vip__sub">Promoções e ofertas relâmpago</div>
+        <div class="vip__sub">Entre antes que esgote — promoções relâmpago</div>
       </div>
       <div class="vip__cta">
         <span>Entrar</span>
@@ -76,7 +84,11 @@
   <!-- ============ CATEGORIES ============ -->
   <section class="cats">
     <div class="section-head">
-      <h2 class="section-head__title">Escolha por onde começar</h2>
+      <div class="section-head__num">01</div>
+      <div>
+        <h2 class="section-head__title">Escolha por onde começar</h2>
+        <p class="section-head__sub">Quatro mundos, um só lar</p>
+      </div>
     </div>
 
     <div class="cats__grid" id="cats-grid">
@@ -86,8 +98,16 @@
 
   <!-- ============ OFERTA DA SEMANA ============ -->
   <section class="offer">
+    <div class="section-head">
+      <div class="section-head__num">02</div>
+      <div>
+        <h2 class="section-head__title">Oferta da semana</h2>
+        <p class="section-head__sub">Selecionado a dedo · estoque limitado</p>
+      </div>
+    </div>
+
     <div class="offer__card">
-      <div class="offer__ribbon">OFERTAS  DA  SEMANA · OFERTAS  DA  SEMANA · OFERTAS </div>
+      <div class="offer__ribbon">OFERTA · OFERTA · OFERTA · OFERTA · OFERTA · </div>
 
       <div class="offer__carousel" id="offer-carousel">
         <div class="offer__slides" id="offer-slides">
@@ -120,7 +140,11 @@
   <!-- ============ NOSSAS LOJAS ============ -->
   <section class="stores">
     <div class="section-head">
-      <h2 class="section-head__title">Fale com a loja mais perto</h2>
+      <div class="section-head__num">03</div>
+      <div>
+        <h2 class="section-head__title">Fale com a loja mais perto</h2>
+        <p class="section-head__sub">3 endereços em Russas/CE</p>
+      </div>
     </div>
 
     <div class="stores__list" id="stores-list">
@@ -131,7 +155,11 @@
   <!-- ============ MAPA INTERATIVO ============ -->
   <section class="map">
     <div class="section-head">
-      <h2 class="section-head__title">Como chegar</h2>
+      <div class="section-head__num">04</div>
+      <div>
+        <h2 class="section-head__title">Como chegar</h2>
+        <p class="section-head__sub">Selecione e trace a rota</p>
+      </div>
     </div>
 
     <div class="map__card">
@@ -163,7 +191,11 @@
   <!-- ============ HORÁRIO ============ -->
   <section class="hours">
     <div class="section-head">
-      <h2 class="section-head__title">Horário de funcionamento</h2>
+      <div class="section-head__num">05</div>
+      <div>
+        <h2 class="section-head__title">Horário de funcionamento</h2>
+        <p class="section-head__sub">Estamos pertinho de você</p>
+      </div>
     </div>
 
     <div class="hours__card" id="hours-card">
@@ -173,6 +205,14 @@
 
   <!-- ============ FACHADA / SOCIAL ============ -->
   <section class="storefront">
+    <div class="storefront__photo">
+      <img src="assets/fachada.webp" alt="Fachada da Loja Arimar Utilidades" />
+      <div class="storefront__photo-tag">
+        <span class="storefront__photo-tag-dot"></span>
+        Loja 01 · Rua Cel Araújo Lima, 986
+      </div>
+    </div>
+
     <a class="social" href="https://www.instagram.com/arimar.utilidades" target="_blank" rel="noopener">
       <div class="social__icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
