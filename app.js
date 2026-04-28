@@ -2,6 +2,51 @@
    ARIMAR UTILIDADES — Link in Bio
 ===================================================== */
 const WHATSAPP_DEFAULT = "558896223840";
+const WHATSAPP_STORES = ["558893491883", "558896145011", "558896223840"];
+
+function buildWhatsAppUrl(number, msg) {
+  return `https://wa.me/${number}?text=${encodeURIComponent(msg)}`;
+}
+
+function shuffleArray(values) {
+  const arr = [...values];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// Usa uma fila embaralhada para distribuir melhor os atendimentos entre as lojas.
+const whatsappRouter = (() => {
+  let bag = [];
+  let lastNumber = null;
+
+  function refillBag() {
+    bag = shuffleArray(WHATSAPP_STORES);
+    if (lastNumber && bag.length > 1 && bag[0] === lastNumber) {
+      const swapIdx = bag.findIndex(number => number !== lastNumber);
+      if (swapIdx > 0) {
+        [bag[0], bag[swapIdx]] = [bag[swapIdx], bag[0]];
+      }
+    }
+  }
+
+  function pickNextNumber() {
+    if (WHATSAPP_STORES.length === 1) return WHATSAPP_STORES[0];
+    if (bag.length === 0) refillBag();
+
+    const selected = bag.shift();
+    lastNumber = selected;
+    return selected;
+  }
+
+  function buildRandomUrl(msg) {
+    return buildWhatsAppUrl(pickNextNumber(), msg);
+  }
+
+  return { buildRandomUrl };
+})();
 
 /* ---------- ICONS (inline SVG strings) ---------- */
 const ICONS = {
@@ -22,9 +67,10 @@ const categories = [
 function renderCats() {
   const grid = document.getElementById("cats-grid");
   grid.innerHTML = categories.map((c, i) => {
-    const url = `https://wa.me/${WHATSAPP_DEFAULT}?text=${encodeURIComponent(c.msg)}`;
+    const url = buildWhatsAppUrl(WHATSAPP_DEFAULT, c.msg);
     return `
       <a class="cat" href="${url}" target="_blank" rel="noopener"
+         data-wa-msg="${c.msg}"
          style="--cat-color:${c.color};--cat-shadow:${c.shadow}"
          aria-label="Ver ${c.title}">
         <div class="cat__num">CAT · 0${c.id}</div>
@@ -121,7 +167,11 @@ let offerIdx = 0;
 
 function getOfferUrl(offer) {
   const msg = `Olá! Tenho interesse na oferta da semana: ${offer.name} por R$ ${offer.price}.`;
-  return `https://wa.me/${WHATSAPP_DEFAULT}?text=${encodeURIComponent(msg)}`;
+  return buildWhatsAppUrl(WHATSAPP_DEFAULT, msg);
+}
+
+function getOfferMessage(offer) {
+  return `Olá! Tenho interesse na oferta da semana: ${offer.name} por R$ ${offer.price}.`;
 }
 
 function formatOfferPrice(value) {
@@ -204,7 +254,7 @@ function renderOffer() {
   const slidesEl = document.getElementById("offer-slides");
   const dotsEl = document.getElementById("offer-dots");
   slidesEl.innerHTML = offers.map(o => `
-    <a class="offer__slide offer__slide-link" href="${getOfferUrl(o)}" target="_blank" rel="noopener" aria-label="Ver oferta de ${o.name}" style="--slide-bg:${o.bg}">
+    <a class="offer__slide offer__slide-link" href="${getOfferUrl(o)}" target="_blank" rel="noopener" data-wa-msg="${getOfferMessage(o)}" aria-label="Ver oferta de ${o.name}" style="--slide-bg:${o.bg}">
       <span class="offer__slide-tag">${o.tag}</span>
       <div class="offer__slide-art">${o.art}</div>
       <div class="offer__slide-name">${o.name}</div>
@@ -238,7 +288,20 @@ function updateOffer() {
 
   const buyBtn = document.getElementById("offer-buy");
   buyBtn.href = getOfferUrl(offer);
+  buyBtn.dataset.waMsg = getOfferMessage(offer);
   buyBtn.setAttribute("aria-label", `Quero a oferta ${offer.name}`);
+}
+
+function enableRandomWhatsappRouting() {
+  document.addEventListener("click", event => {
+    const link = event.target.closest("a[data-wa-msg]");
+    if (!link) return;
+
+    const msg = link.dataset.waMsg;
+    if (!msg) return;
+
+    link.href = whatsappRouter.buildRandomUrl(msg);
+  });
 }
 
 /* ---------- 3. STORES (cards) + 4. MAP (tabs) ---------- */
@@ -414,6 +477,7 @@ function renderStatus() {
 
 /* ---------- INIT ---------- */
 document.addEventListener("DOMContentLoaded", () => {
+  enableRandomWhatsappRouting();
   renderCats();
   renderOffer();
   renderStores();
