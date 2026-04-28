@@ -45,6 +45,8 @@ const offers = [
   {
     tag: "PROMO #01",
     name: "Jogo de Panelas Antiaderente",
+    fromPrice: "89,90",
+    price: "49,90",
     bg: "#FFE9D6",
     art: `<svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
       <rect x="0" y="0" width="200" height="160" fill="none"/>
@@ -60,6 +62,8 @@ const offers = [
   {
     tag: "PROMO #02",
     name: "Kit Tigelas 12 peças",
+    fromPrice: "79,90",
+    price: "39,90",
     bg: "#E8F5E9",
     art: `<svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
       <ellipse cx="100" cy="135" rx="80" ry="6" fill="#000" opacity="0.08"/>
@@ -75,6 +79,8 @@ const offers = [
   {
     tag: "PROMO #03",
     name: "Jogo de Cama Casal 4 peças",
+    fromPrice: "119,90",
+    price: "69,90",
     bg: "#E3F2FD",
     art: `<svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
       <ellipse cx="100" cy="140" rx="80" ry="5" fill="#000" opacity="0.08"/>
@@ -92,6 +98,8 @@ const offers = [
   {
     tag: "PROMO #04",
     name: "Cesto Organizador",
+    fromPrice: "59,90",
+    price: "29,90",
     bg: "#FFF4E0",
     art: `<svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
       <ellipse cx="100" cy="135" rx="70" ry="5" fill="#000" opacity="0.08"/>
@@ -110,21 +118,103 @@ const offers = [
 ];
 
 let offerIdx = 0;
+
+function getOfferUrl(offer) {
+  const msg = `Olá! Tenho interesse na oferta da semana: ${offer.name} por R$ ${offer.price}.`;
+  return `https://wa.me/${WHATSAPP_DEFAULT}?text=${encodeURIComponent(msg)}`;
+}
+
+function formatOfferPrice(value) {
+  const [intPart, decimalPart = "00"] = value.split(",");
+  return `R$ ${intPart}<sup>,${decimalPart}</sup>`;
+}
+
+function stepOffer(step) {
+  offerIdx = (offerIdx + step + offers.length) % offers.length;
+  updateOffer();
+}
+
+function enableOfferSwipe() {
+  const carouselEl = document.getElementById("offer-carousel");
+  const slidesEl = document.getElementById("offer-slides");
+  const swipeThreshold = 50;
+
+  let startX = 0;
+  let currentX = 0;
+  let isSwiping = false;
+  let suppressClick = false;
+
+  const onSwipeStart = x => {
+    startX = x;
+    currentX = x;
+    isSwiping = true;
+    slidesEl.style.transition = "none";
+  };
+
+  const onSwipeMove = (x, ev) => {
+    if (!isSwiping) return;
+    currentX = x;
+    const deltaX = currentX - startX;
+
+    if (Math.abs(deltaX) > 8) {
+      suppressClick = true;
+      ev.preventDefault();
+    }
+
+    slidesEl.style.transform = `translateX(calc(-${offerIdx * 100}% + ${deltaX}px))`;
+  };
+
+  const onSwipeEnd = () => {
+    if (!isSwiping) return;
+    isSwiping = false;
+    slidesEl.style.transition = "";
+
+    const deltaX = currentX - startX;
+    if (Math.abs(deltaX) >= swipeThreshold) {
+      stepOffer(deltaX < 0 ? 1 : -1);
+    } else {
+      updateOffer();
+    }
+  };
+
+  carouselEl.addEventListener("touchstart", ev => {
+    if (ev.touches.length !== 1) return;
+    onSwipeStart(ev.touches[0].clientX);
+  }, { passive: true });
+
+  carouselEl.addEventListener("touchmove", ev => {
+    if (ev.touches.length !== 1) return;
+    onSwipeMove(ev.touches[0].clientX, ev);
+  }, { passive: false });
+
+  carouselEl.addEventListener("touchend", onSwipeEnd);
+  carouselEl.addEventListener("touchcancel", onSwipeEnd);
+
+  slidesEl.addEventListener("click", ev => {
+    const clickedSlide = ev.target.closest(".offer__slide-link");
+    if (!clickedSlide) return;
+    if (!suppressClick) return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    suppressClick = false;
+  }, true);
+}
+
 function renderOffer() {
   const slidesEl = document.getElementById("offer-slides");
   const dotsEl = document.getElementById("offer-dots");
   slidesEl.innerHTML = offers.map(o => `
-    <div class="offer__slide" style="--slide-bg:${o.bg}">
+    <a class="offer__slide offer__slide-link" href="${getOfferUrl(o)}" target="_blank" rel="noopener" aria-label="Ver oferta de ${o.name}" style="--slide-bg:${o.bg}">
       <span class="offer__slide-tag">${o.tag}</span>
       <div class="offer__slide-art">${o.art}</div>
       <div class="offer__slide-name">${o.name}</div>
-    </div>
+    </a>
   `).join("");
   dotsEl.innerHTML = offers.map((_, i) => `<button class="offer__dot${i === 0 ? " is-active" : ""}" data-idx="${i}" aria-label="Ir para slide ${i+1}"></button>`).join("");
   updateOffer();
 
-  document.getElementById("offer-prev").addEventListener("click", () => { offerIdx = (offerIdx - 1 + offers.length) % offers.length; updateOffer(); });
-  document.getElementById("offer-next").addEventListener("click", () => { offerIdx = (offerIdx + 1) % offers.length; updateOffer(); });
+  document.getElementById("offer-prev").addEventListener("click", () => stepOffer(-1));
+  document.getElementById("offer-next").addEventListener("click", () => stepOffer(1));
   dotsEl.addEventListener("click", e => {
     const b = e.target.closest(".offer__dot");
     if (!b) return;
@@ -132,15 +222,23 @@ function renderOffer() {
     updateOffer();
   });
 
+  enableOfferSwipe();
+
   // Autoplay
   setInterval(() => {
-    offerIdx = (offerIdx + 1) % offers.length;
-    updateOffer();
+    stepOffer(1);
   }, 5000);
 }
 function updateOffer() {
+  const offer = offers[offerIdx];
   document.getElementById("offer-slides").style.transform = `translateX(-${offerIdx * 100}%)`;
   document.querySelectorAll(".offer__dot").forEach((d, i) => d.classList.toggle("is-active", i === offerIdx));
+  document.getElementById("offer-from").textContent = `de R$ ${offer.fromPrice}`;
+  document.getElementById("offer-price").innerHTML = formatOfferPrice(offer.price);
+
+  const buyBtn = document.getElementById("offer-buy");
+  buyBtn.href = getOfferUrl(offer);
+  buyBtn.setAttribute("aria-label", `Quero a oferta ${offer.name}`);
 }
 
 /* ---------- 3. STORES (cards) + 4. MAP (tabs) ---------- */

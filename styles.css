@@ -642,6 +642,7 @@ section { margin-top: 36px; }
 .offer__carousel {
   position: relative;
   background: var(--surface-2);
+  touch-action: pan-y;
 }
 .offer__slides {
   display: flex;
@@ -655,6 +656,13 @@ section { margin-top: 36px; }
   place-items: center;
   background: var(--slide-bg);
   overflow: hidden;
+}
+.offer__slide-link {
+  color: inherit;
+}
+.offer__slide-link:focus-visible {
+  outline: 3px solid rgba(248, 92, 0, 0.9);
+  outline-offset: -3px;
 }
 .offer__slide-art {
   width: 70%;
