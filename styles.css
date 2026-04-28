@@ -120,7 +120,7 @@ section { margin-top: 36px; }
   line-height: 1.05;
   margin: 0;
   letter-spacing: -0.01em;
-  color: #fff;
+  color: #f5efea;
 }
 .section-head__sub {
   margin: 4px 0 0;
@@ -148,7 +148,7 @@ section { margin-top: 36px; }
   text-align: center;
   font-family: var(--font-display);
   font-weight: 800;
-  color: rgba(248, 92, 0, 0.62);
+  color: #f5efea;
 }
 
 .v2-clean-head .section-head__title::before {
@@ -218,6 +218,7 @@ section { margin-top: 36px; }
   font-size: 14.5px;
   line-height: 1.2;
   letter-spacing: -0.005em;
+  color: var(--light-text-primary);
 }
 
 .v2-clean-head .store__address::before {
@@ -467,6 +468,7 @@ section { margin-top: 36px; }
 .vip__title {
   font-family: var(--font-display);
   font-size: 18px;
+  font-weight: 800;
   line-height: 1.05;
   letter-spacing: -0.01em;
   margin-top: 2px;
@@ -1002,7 +1004,7 @@ section { margin-top: 36px; }
 }
 .hours__row.is-today .hours__day {
   color: var(--light-text-primary);
-  font-weight: 700;
+  font-weight: 500;
 }
 .hours__today-badge {
   font-family: var(--font-mono);
