@@ -456,7 +456,9 @@ function renderStatus() {
     labelEl.textContent = "Fechado agora";
     if (min < todaySched.openingMin) {
       const openH = Math.floor(todaySched.openingMin / 60);
-      hoursEl.textContent = `abre às ${openH}h`;
+      const openM = todaySched.openingMin % 60;
+      const openTime = openM === 0 ? `${openH}h` : `${openH}h${String(openM).padStart(2, "0")}`;
+      hoursEl.textContent = `abre às ${openTime}`;
     } else {
       const nextOpening = getNextOpeningInfo(day);
       if (nextOpening) {
