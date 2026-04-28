@@ -626,10 +626,26 @@ section { margin-top: 36px; }
   background: var(--orange);
   color: #fff;
   padding: 7px 0;
-  text-align: center;
-  white-space: nowrap;
   overflow: hidden;
   position: relative;
+}
+.offer__ribbon-track {
+  margin: 0 34px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.offer__ribbon-item {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  position: relative;
+}
+.offer__ribbon-item:not(:last-child)::after {
+  content: "·";
+  margin: 0 10px;
+  opacity: 0.92;
 }
 .offer__ribbon::before, .offer__ribbon::after {
   content: "★";
