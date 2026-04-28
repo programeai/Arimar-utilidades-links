@@ -309,7 +309,7 @@ const stores = [
     mapsUrl: "https://www.google.com/maps/dir/?api=1&destination=Rua+Cel+Ara%C3%BAjo+Lima+986+Russas+CE",
     embed: "https://maps.google.com/maps?q=Rua+Cel+Araujo+Lima+986+Russas+CE&output=embed",
     bgFrom: "#F85C00", bgTo: "#C44400",
-    photo: "assets/fachada.webp",
+    photo: "assets/loja1.webp",
   },
   {
     id: 2,
@@ -319,7 +319,7 @@ const stores = [
     mapsUrl: "https://www.google.com/maps/dir/?api=1&destination=Rua+Cel+Ara%C3%BAjo+Lima+1128+Russas+CE",
     embed: "https://maps.google.com/maps?q=Rua+Cel+Araujo+Lima+1128+Russas+CE&output=embed",
     bgFrom: "#2A9D5F", bgTo: "#176E3F",
-    photo: "assets/fachada.webp",
+    photo: "assets/loja2.webp",
   },
   {
     id: 3,
@@ -329,7 +329,7 @@ const stores = [
     mapsUrl: "https://www.google.com/maps/dir/?api=1&destination=Rua+Padre+Raul+Vieira+643+Russas+CE",
     embed: "https://maps.google.com/maps?q=Rua+Padre+Raul+Vieira+643+Russas+CE&output=embed",
     bgFrom: "#2D7DD2", bgTo: "#1a4d8a",
-    photo: "assets/fachada.webp",
+    photo: "assets/loja3.webp",
   },
 ];
 
@@ -342,7 +342,6 @@ function renderStores() {
       <div class="store__media">
         ${s.photo ? `<img class="store__photo" src="${s.photo}" alt=""><div class="store__photo-overlay"></div>` : ""}
         <div class="store__num">
-          <span class="store__num-prefix">LOJA</span>
           0${s.id}
         </div>
       </div>
