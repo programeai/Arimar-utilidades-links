@@ -89,7 +89,6 @@ function renderCats() {
 /* Placeholder slides com SVG ilustrativos — substitua por fotos reais. */
 const offers = [
   {
-    tag: "PROMO #01",
     name: "Jogo de Panelas Antiaderente",
     fromPrice: "89,90",
     price: "49,90",
@@ -106,7 +105,6 @@ const offers = [
     </svg>`
   },
   {
-    tag: "PROMO #02",
     name: "Kit Tigelas 12 peças",
     fromPrice: "79,90",
     price: "39,90",
@@ -123,7 +121,6 @@ const offers = [
     </svg>`
   },
   {
-    tag: "PROMO #03",
     name: "Jogo de Cama Casal 4 peças",
     fromPrice: "119,90",
     price: "69,90",
@@ -142,7 +139,6 @@ const offers = [
     </svg>`
   },
   {
-    tag: "PROMO #04",
     name: "Cesto Organizador",
     fromPrice: "59,90",
     price: "29,90",
@@ -255,7 +251,6 @@ function renderOffer() {
   const dotsEl = document.getElementById("offer-dots");
   slidesEl.innerHTML = offers.map(o => `
     <a class="offer__slide offer__slide-link" href="${getOfferUrl(o)}" target="_blank" rel="noopener" data-wa-msg="${getOfferMessage(o)}" aria-label="Ver oferta de ${o.name}" style="--slide-bg:${o.bg}">
-      <span class="offer__slide-tag">${o.tag}</span>
       <div class="offer__slide-art">${o.art}</div>
       <div class="offer__slide-name">${o.name}</div>
     </a>
