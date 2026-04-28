@@ -223,7 +223,7 @@ body.v2-clean-head .bg-blob {
 }
 
 .v2-clean-head .hero__title {
-  color: var(--light-text-secondary);
+  color: #0f1f45;
 }
 
 .v2-clean-head .hero__title-accent {
