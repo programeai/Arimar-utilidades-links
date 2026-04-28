@@ -169,16 +169,24 @@ section { margin-top: 36px; }
 
 /* Keep index background aligned with minimalista theme */
 body.v2-clean-head {
-  background: #FDECDF;
+  background: #F9E3D1;
 }
 
 body.v2-clean-head::before {
-  background: #FDECDF;
+  background: #F9E3D1;
 }
 
 body.v2-clean-head .bg-grid,
 body.v2-clean-head .bg-blob {
   display: none;
+}
+
+/* Remove all shadows for clean v2 look */
+.v2-clean-head *,
+.v2-clean-head *::before,
+.v2-clean-head *::after {
+  box-shadow: none !important;
+  text-shadow: none !important;
 }
 
 /* Text color harmonization based on minimalista theme */
