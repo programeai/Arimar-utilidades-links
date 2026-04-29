@@ -226,6 +226,10 @@ body.v2-clean-head .bg-blob {
   color: #5a4036;
 }
 
+.v2-clean-head .hero__title-name {
+  color: #000040ff;
+}
+
 .v2-clean-head .hero__title-accent {
   background: none;
   color: #F26B24;
