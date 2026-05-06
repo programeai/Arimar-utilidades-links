@@ -86,88 +86,50 @@ function renderCats() {
 }
 
 /* ---------- 2. OFERTA — CARROSSEL ---------- */
-/* Placeholder slides com SVG ilustrativos — substitua por fotos reais. */
 const offers = [
   {
-    name: "Jogo de Panelas Antiaderente",
-    fromPrice: "89,90",
-    price: "49,90",
-    bg: "#FFE9D6",
-    art: `<svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
-      <rect x="0" y="0" width="200" height="160" fill="none"/>
-      <ellipse cx="100" cy="125" rx="70" ry="6" fill="#000" opacity="0.08"/>
-      <path d="M40 60 Q40 50 50 50 H150 Q160 50 160 60 V100 Q160 120 140 120 H60 Q40 120 40 100 Z" fill="#1a1a1a"/>
-      <path d="M40 60 H160 V70 H40 Z" fill="#F85C00"/>
-      <rect x="22" y="62" width="22" height="6" rx="3" fill="#1a1a1a"/>
-      <rect x="156" y="62" width="22" height="6" rx="3" fill="#1a1a1a"/>
-      <ellipse cx="100" cy="58" rx="56" ry="6" fill="#444"/>
-      <ellipse cx="100" cy="56" rx="50" ry="4" fill="#666"/>
-    </svg>`
+    name: "Coxa de Cama",
+    pricePrefix: "por",
+    fromPrice: null,
+    price: "99,90",
+    image: "assets/products/2026/dia-das-maes/coxa-de-cama.jpeg",
+    bg: "#F7EFE6"
   },
   {
-    name: "Kit Tigelas 12 peças",
-    fromPrice: "79,90",
+    name: "Guarda Tudo",
+    pricePrefix: "por",
+    fromPrice: "139,00",
+    price: "99,00",
+    image: "assets/products/2026/dia-das-maes/guarda-tudo.jpeg",
+    bg: "#EAF4EC"
+  },
+  {
+    name: "Kits Presenteaveis",
+    pricePrefix: "a partir de",
+    fromPrice: null,
+    price: "10,00",
+    image: "assets/products/2026/dia-das-maes/kit-tupperware.jpeg",
+    bg: "#FDF5E8"
+  },
+  {
+    name: "Conjunto de Pratos",
+    pricePrefix: "por",
+    fromPrice: null,
     price: "39,90",
-    bg: "#E8F5E9",
-    art: `<svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="100" cy="135" rx="80" ry="6" fill="#000" opacity="0.08"/>
-      <path d="M50 80 Q50 120 100 120 Q150 120 150 80 Z" fill="#2A9D5F"/>
-      <ellipse cx="100" cy="80" rx="50" ry="10" fill="#37b06c"/>
-      <ellipse cx="100" cy="80" rx="42" ry="6" fill="#1d6d3f"/>
-      <path d="M70 60 Q70 90 100 90 Q130 90 130 60 Z" fill="#F85C00" opacity="0.8"/>
-      <ellipse cx="100" cy="60" rx="30" ry="6" fill="#FF7A2A"/>
-      <path d="M85 48 Q85 60 100 60 Q115 60 115 48 Z" fill="#E63946"/>
-      <ellipse cx="100" cy="48" rx="15" ry="3" fill="#ff6363"/>
-    </svg>`
-  },
-  {
-    name: "Jogo de Cama Casal 4 peças",
-    fromPrice: "119,90",
-    price: "69,90",
-    bg: "#E3F2FD",
-    art: `<svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="100" cy="140" rx="80" ry="5" fill="#000" opacity="0.08"/>
-      <rect x="20" y="80" width="160" height="40" rx="6" fill="#2D7DD2"/>
-      <rect x="20" y="80" width="160" height="12" rx="6" fill="#FFFFFF"/>
-      <rect x="35" y="55" width="50" height="32" rx="6" fill="#FFFFFF"/>
-      <rect x="115" y="55" width="50" height="32" rx="6" fill="#FFFFFF"/>
-      <rect x="35" y="55" width="50" height="32" rx="6" fill="none" stroke="#2D7DD2" stroke-width="2"/>
-      <rect x="115" y="55" width="50" height="32" rx="6" fill="none" stroke="#2D7DD2" stroke-width="2"/>
-      <circle cx="60" cy="71" r="3" fill="#F85C00"/>
-      <circle cx="140" cy="71" r="3" fill="#F85C00"/>
-      <rect x="14" y="118" width="172" height="6" rx="2" fill="#1a3a5c"/>
-    </svg>`
-  },
-  {
-    name: "Cesto Organizador",
-    fromPrice: "59,90",
-    price: "29,90",
-    bg: "#FFF4E0",
-    art: `<svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="100" cy="135" rx="70" ry="5" fill="#000" opacity="0.08"/>
-      <path d="M55 60 L145 60 L155 130 L45 130 Z" fill="#F4B324"/>
-      <path d="M55 60 L145 60 L150 75 L50 75 Z" fill="#FFD466"/>
-      <path d="M50 75 L150 75 L155 130 L45 130 Z" fill="none" stroke="#b8830c" stroke-width="1" opacity="0.4"/>
-      <line x1="60" y1="80" x2="62" y2="125" stroke="#b8830c" stroke-width="1.5" opacity="0.4"/>
-      <line x1="80" y1="80" x2="82" y2="125" stroke="#b8830c" stroke-width="1.5" opacity="0.4"/>
-      <line x1="100" y1="80" x2="100" y2="125" stroke="#b8830c" stroke-width="1.5" opacity="0.4"/>
-      <line x1="120" y1="80" x2="118" y2="125" stroke="#b8830c" stroke-width="1.5" opacity="0.4"/>
-      <line x1="140" y1="80" x2="138" y2="125" stroke="#b8830c" stroke-width="1.5" opacity="0.4"/>
-      <ellipse cx="100" cy="60" rx="45" ry="6" fill="#d99a17"/>
-      <ellipse cx="100" cy="58" rx="40" ry="3" fill="#FFE0A0"/>
-    </svg>`
+    image: "assets/products/2026/dia-das-maes/pratos.jpeg",
+    bg: "#EDF2FA"
   },
 ];
 
 let offerIdx = 0;
 
 function getOfferUrl(offer) {
-  const msg = `Olá! Tenho interesse na oferta da semana: ${offer.name} por R$ ${offer.price}.`;
+  const msg = `Olá! Tenho interesse na oferta da semana: ${offer.name} (${offer.pricePrefix} R$ ${offer.price}).`;
   return buildWhatsAppUrl(WHATSAPP_DEFAULT, msg);
 }
 
 function getOfferMessage(offer) {
-  return `Olá! Tenho interesse na oferta da semana: ${offer.name} por R$ ${offer.price}.`;
+  return `Olá! Tenho interesse na oferta da semana: ${offer.name} (${offer.pricePrefix} R$ ${offer.price}).`;
 }
 
 function formatOfferPrice(value) {
@@ -251,7 +213,9 @@ function renderOffer() {
   const dotsEl = document.getElementById("offer-dots");
   slidesEl.innerHTML = offers.map(o => `
     <a class="offer__slide offer__slide-link" href="${getOfferUrl(o)}" target="_blank" rel="noopener" data-wa-msg="${getOfferMessage(o)}" aria-label="Ver oferta de ${o.name}" style="--slide-bg:${o.bg}">
-      <div class="offer__slide-art">${o.art}</div>
+      <div class="offer__slide-art">
+        <img src="${o.image}" alt="${o.name}" loading="lazy" decoding="async">
+      </div>
       <div class="offer__slide-name">${o.name}</div>
     </a>
   `).join("");
@@ -278,8 +242,15 @@ function updateOffer() {
   const offer = offers[offerIdx];
   document.getElementById("offer-slides").style.transform = `translateX(-${offerIdx * 100}%)`;
   document.querySelectorAll(".offer__dot").forEach((d, i) => d.classList.toggle("is-active", i === offerIdx));
-  document.getElementById("offer-from").textContent = `de R$ ${offer.fromPrice}`;
-  document.getElementById("offer-price").innerHTML = formatOfferPrice(offer.price);
+  const fromEl = document.getElementById("offer-from");
+  if (offer.fromPrice) {
+    fromEl.textContent = `de R$ ${offer.fromPrice}`;
+    fromEl.style.display = "inline";
+  } else {
+    fromEl.style.display = "none";
+  }
+
+  document.getElementById("offer-by").innerHTML = `${offer.pricePrefix} <strong id="offer-price">${formatOfferPrice(offer.price)}</strong>`;
 
   const buyBtn = document.getElementById("offer-buy");
   buyBtn.href = getOfferUrl(offer);
