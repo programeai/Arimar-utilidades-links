@@ -122,6 +122,8 @@ const offers = [
 ];
 
 let offerIdx = 0;
+let offerAutoplayTimer = null;
+const OFFER_AUTOPLAY_MS = 5000;
 
 function getOfferUrl(offer) {
   const msg = `Olá! Tenho interesse na oferta da semana: ${offer.name} (${offer.pricePrefix} R$ ${offer.price}).`;
@@ -137,9 +139,32 @@ function formatOfferPrice(value) {
   return `R$ ${intPart}<sup>,${decimalPart}</sup>`;
 }
 
-function stepOffer(step) {
+function resetOfferAutoplay() {
+  if (offerAutoplayTimer) {
+    clearTimeout(offerAutoplayTimer);
+  }
+
+  offerAutoplayTimer = setTimeout(() => {
+    stepOffer(1);
+  }, OFFER_AUTOPLAY_MS);
+}
+
+function setOfferIndex(index, { resetAutoplay = true } = {}) {
+  offerIdx = (index + offers.length) % offers.length;
+  updateOffer();
+
+  if (resetAutoplay) {
+    resetOfferAutoplay();
+  }
+}
+
+function stepOffer(step, { resetAutoplay = true } = {}) {
   offerIdx = (offerIdx + step + offers.length) % offers.length;
   updateOffer();
+
+  if (resetAutoplay) {
+    resetOfferAutoplay();
+  }
 }
 
 function enableOfferSwipe() {
@@ -227,16 +252,13 @@ function renderOffer() {
   dotsEl.addEventListener("click", e => {
     const b = e.target.closest(".offer__dot");
     if (!b) return;
-    offerIdx = +b.dataset.idx;
-    updateOffer();
+    setOfferIndex(+b.dataset.idx);
   });
 
   enableOfferSwipe();
 
-  // Autoplay
-  setInterval(() => {
-    stepOffer(1);
-  }, 5000);
+  // Autoplay com reset a cada troca de slide.
+  resetOfferAutoplay();
 }
 function updateOffer() {
   const offer = offers[offerIdx];
