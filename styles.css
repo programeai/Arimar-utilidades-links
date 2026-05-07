@@ -722,6 +722,10 @@ body.v2-clean-head .bg-blob {
 .cat:hover .cat__arrow { transform: translate(2px, -2px); }
 
 /* ============ OFERTA ============ */
+.offer {
+  margin-top: 0;
+}
+
 .offer__card {
   position: relative;
   background: var(--surface);

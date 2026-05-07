@@ -445,7 +445,7 @@ function renderStatus() {
 /* ---------- INIT ---------- */
 document.addEventListener("DOMContentLoaded", () => {
   enableRandomWhatsappRouting();
-  renderCats();
+  // renderCats();
   renderOffer();
   renderStores();
   renderMap();
