@@ -88,7 +88,7 @@ function renderCats() {
 /* ---------- 2. OFERTA — CARROSSEL ---------- */
 const offers = [
   {
-    name: "Coxa de Cama",
+    name: "Coxa para Cama de Casal",
     pricePrefix: "por",
     fromPrice: null,
     price: "99,90",
