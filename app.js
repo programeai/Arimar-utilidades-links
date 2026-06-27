@@ -3,6 +3,136 @@
 ===================================================== */
 const WHATSAPP_DEFAULT = "558896223840";
 const WHATSAPP_STORES = ["558893491883", "558896145011", "558896223840"];
+const GTM_CONTAINER_ID = ""; // Ex.: GTM-XXXXXXX
+const GA4_MEASUREMENT_ID = "G-2YQXF3HYTL";
+const ANALYTICS_SESSION_KEY = "arimar_session_id";
+const ANALYTICS_ATTRIBUTION_KEY = "arimar_attribution";
+
+function safeJsonParse(value, fallback = {}) {
+  if (!value) return fallback;
+  try {
+    return JSON.parse(value);
+  } catch {
+    return fallback;
+  }
+}
+
+function getOrCreateSessionId() {
+  const existing = sessionStorage.getItem(ANALYTICS_SESSION_KEY);
+  if (existing) return existing;
+
+  const randomPart = Math.random().toString(36).slice(2, 8);
+  const sessionId = `${Date.now().toString(36)}-${randomPart}`;
+  sessionStorage.setItem(ANALYTICS_SESSION_KEY, sessionId);
+  return sessionId;
+}
+
+function readAttributionFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    utm_source: params.get("utm_source") || "",
+    utm_medium: params.get("utm_medium") || "",
+    utm_campaign: params.get("utm_campaign") || "",
+    utm_content: params.get("utm_content") || "",
+    utm_term: params.get("utm_term") || "",
+    referrer: document.referrer || "",
+  };
+}
+
+function getOrCreateAttributionContext() {
+  const stored = safeJsonParse(sessionStorage.getItem(ANALYTICS_ATTRIBUTION_KEY), null);
+  if (stored) return stored;
+
+  const fromUrl = readAttributionFromUrl();
+  sessionStorage.setItem(ANALYTICS_ATTRIBUTION_KEY, JSON.stringify(fromUrl));
+  return fromUrl;
+}
+
+function setupGTM() {
+  const id = GTM_CONTAINER_ID.trim();
+  if (!id) return;
+
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ "gtm.start": Date.now(), event: "gtm.js" });
+
+  const script = document.createElement("script");
+  script.async = true;
+  script.src = `https://www.googletagmanager.com/gtm.js?id=${id}`;
+  document.head.appendChild(script);
+}
+
+function setupGA4() {
+  const id = GA4_MEASUREMENT_ID.trim();
+  if (!id) return;
+
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = window.gtag || function gtag() {
+    window.dataLayer.push(arguments);
+  };
+
+  const script = document.createElement("script");
+  script.async = true;
+  script.src = `https://www.googletagmanager.com/gtag/js?id=${id}`;
+  document.head.appendChild(script);
+
+  window.gtag("js", new Date());
+  window.gtag("config", id, {
+    anonymize_ip: true,
+    transport_type: "beacon",
+    send_page_view: false,
+  });
+}
+
+function emitAnalyticsEvent(eventName, params = {}) {
+  const attribution = getOrCreateAttributionContext();
+  const payload = {
+    event: eventName,
+    session_id: getOrCreateSessionId(),
+    page_path: `${window.location.pathname}${window.location.search}`,
+    page_title: document.title,
+    event_time: new Date().toISOString(),
+    ...attribution,
+    ...params,
+  };
+
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push(payload);
+
+  if (typeof window.gtag === "function") {
+    const { event, ...gaParams } = payload;
+    window.gtag("event", eventName, gaParams);
+  }
+}
+
+function buildTrackedMessage(msg) {
+  return msg;
+}
+
+function trackDatasetClickEvents() {
+  document.addEventListener("click", event => {
+    const el = event.target.closest("[data-track-event]");
+    if (!el) return;
+
+    const {
+      trackEvent,
+      trackSource,
+      trackStoreId,
+      trackOfferName,
+      trackCategoryId,
+      trackCategoryName,
+      trackAction,
+    } = el.dataset;
+
+    emitAnalyticsEvent(trackEvent, {
+      source: trackSource || "",
+      store_id: trackStoreId || "",
+      offer_name: trackOfferName || "",
+      category_id: trackCategoryId || "",
+      category_name: trackCategoryName || "",
+      action: trackAction || "click",
+    });
+  });
+}
 
 function buildWhatsAppUrl(number, msg) {
   return `https://wa.me/${number}?text=${encodeURIComponent(msg)}`;
@@ -41,8 +171,9 @@ const whatsappRouter = (() => {
     return selected;
   }
 
-  function buildRandomUrl(msg) {
-    return buildWhatsAppUrl(pickNextNumber(), msg);
+  function buildRandomUrl(msg, trackMeta = {}) {
+    const trackedMessage = buildTrackedMessage(msg, trackMeta);
+    return buildWhatsAppUrl(pickNextNumber(), trackedMessage);
   }
 
   return { buildRandomUrl };
@@ -67,10 +198,17 @@ const categories = [
 function renderCats() {
   const grid = document.getElementById("cats-grid");
   grid.innerHTML = categories.map((c, i) => {
-    const url = buildWhatsAppUrl(WHATSAPP_DEFAULT, c.msg);
+    const url = buildWhatsAppUrl(WHATSAPP_DEFAULT, buildTrackedMessage(c.msg, {
+      block: "categoria",
+      cat: c.id,
+    }));
     return `
       <a class="cat" href="${url}" target="_blank" rel="noopener"
          data-wa-msg="${c.msg}"
+         data-track-event="category_whatsapp_click"
+         data-track-source="category_card"
+         data-track-category-id="${c.id}"
+         data-track-category-name="${c.title}"
          style="--cat-color:${c.color};--cat-shadow:${c.shadow}"
          aria-label="Ver ${c.title}">
         <div class="cat__num">CAT · 0${c.id}</div>
@@ -127,7 +265,10 @@ const OFFER_AUTOPLAY_MS = 5000;
 
 function getOfferUrl(offer) {
   const msg = `Olá! Tenho interesse na oferta da semana: ${offer.name} (${offer.pricePrefix} R$ ${offer.price}).`;
-  return buildWhatsAppUrl(WHATSAPP_DEFAULT, msg);
+  return buildWhatsAppUrl(WHATSAPP_DEFAULT, buildTrackedMessage(msg, {
+    block: "oferta",
+    item: offer.name,
+  }));
 }
 
 function getOfferMessage(offer) {
@@ -145,22 +286,32 @@ function resetOfferAutoplay() {
   }
 
   offerAutoplayTimer = setTimeout(() => {
-    stepOffer(1);
+    stepOffer(1, { interaction: "autoplay" });
   }, OFFER_AUTOPLAY_MS);
 }
 
-function setOfferIndex(index, { resetAutoplay = true } = {}) {
+function setOfferIndex(index, { resetAutoplay = true, interaction = "dot" } = {}) {
   offerIdx = (index + offers.length) % offers.length;
   updateOffer();
+  emitAnalyticsEvent("offer_view", {
+    offer_name: offers[offerIdx].name,
+    offer_index: offerIdx + 1,
+    interaction,
+  });
 
   if (resetAutoplay) {
     resetOfferAutoplay();
   }
 }
 
-function stepOffer(step, { resetAutoplay = true } = {}) {
+function stepOffer(step, { resetAutoplay = true, interaction = "navigation" } = {}) {
   offerIdx = (offerIdx + step + offers.length) % offers.length;
   updateOffer();
+  emitAnalyticsEvent("offer_view", {
+    offer_name: offers[offerIdx].name,
+    offer_index: offerIdx + 1,
+    interaction,
+  });
 
   if (resetAutoplay) {
     resetOfferAutoplay();
@@ -204,7 +355,7 @@ function enableOfferSwipe() {
 
     const deltaX = currentX - startX;
     if (Math.abs(deltaX) >= swipeThreshold) {
-      stepOffer(deltaX < 0 ? 1 : -1);
+      stepOffer(deltaX < 0 ? 1 : -1, { interaction: "swipe" });
     } else {
       updateOffer();
     }
@@ -237,7 +388,7 @@ function renderOffer() {
   const slidesEl = document.getElementById("offer-slides");
   const dotsEl = document.getElementById("offer-dots");
   slidesEl.innerHTML = offers.map(o => `
-    <a class="offer__slide offer__slide-link" href="${getOfferUrl(o)}" target="_blank" rel="noopener" data-wa-msg="${getOfferMessage(o)}" aria-label="Ver oferta de ${o.name}" style="--slide-bg:${o.bg}">
+    <a class="offer__slide offer__slide-link" href="${getOfferUrl(o)}" target="_blank" rel="noopener" data-wa-msg="${getOfferMessage(o)}" data-track-event="offer_click" data-track-source="offer_slide" data-track-offer-name="${o.name}" aria-label="Ver oferta de ${o.name}" style="--slide-bg:${o.bg}">
       <div class="offer__slide-art">
         <img src="${o.image}" alt="${o.name}" loading="lazy" decoding="async">
       </div>
@@ -246,13 +397,18 @@ function renderOffer() {
   `).join("");
   dotsEl.innerHTML = offers.map((_, i) => `<button class="offer__dot${i === 0 ? " is-active" : ""}" data-idx="${i}" aria-label="Ir para slide ${i+1}"></button>`).join("");
   updateOffer();
+  emitAnalyticsEvent("offer_view", {
+    offer_name: offers[offerIdx].name,
+    offer_index: offerIdx + 1,
+    interaction: "initial",
+  });
 
-  document.getElementById("offer-prev").addEventListener("click", () => stepOffer(-1));
-  document.getElementById("offer-next").addEventListener("click", () => stepOffer(1));
+  document.getElementById("offer-prev").addEventListener("click", () => stepOffer(-1, { interaction: "prev" }));
+  document.getElementById("offer-next").addEventListener("click", () => stepOffer(1, { interaction: "next" }));
   dotsEl.addEventListener("click", e => {
     const b = e.target.closest(".offer__dot");
     if (!b) return;
-    setOfferIndex(+b.dataset.idx);
+    setOfferIndex(+b.dataset.idx, { interaction: "dot" });
   });
 
   enableOfferSwipe();
@@ -277,6 +433,9 @@ function updateOffer() {
   const buyBtn = document.getElementById("offer-buy");
   buyBtn.href = getOfferUrl(offer);
   buyBtn.dataset.waMsg = getOfferMessage(offer);
+  buyBtn.dataset.trackEvent = "offer_click";
+  buyBtn.dataset.trackSource = "offer_cta";
+  buyBtn.dataset.trackOfferName = offer.name;
   buyBtn.setAttribute("aria-label", `Quero a oferta ${offer.name}`);
 }
 
@@ -288,7 +447,11 @@ function enableRandomWhatsappRouting() {
     const msg = link.dataset.waMsg;
     if (!msg) return;
 
-    link.href = whatsappRouter.buildRandomUrl(msg);
+    link.href = whatsappRouter.buildRandomUrl(msg, {
+      block: link.dataset.trackSource || "whatsapp",
+      item: link.dataset.trackOfferName || link.dataset.trackCategoryName || "",
+      loja: link.dataset.trackStoreId || "",
+    });
   });
 }
 
@@ -330,6 +493,9 @@ function renderStores() {
   const list = document.getElementById("stores-list");
   list.innerHTML = stores.map(s => `
     <a class="store" href="${s.whatsapp}" target="_blank" rel="noopener"
+       data-track-event="store_whatsapp_click"
+       data-track-source="store_card"
+       data-track-store-id="${s.id}"
        style="--store-bg-from:${s.bgFrom};--store-bg-to:${s.bgTo}"
        aria-label="Falar com Loja ${s.id}">
       <div class="store__media">
@@ -357,8 +523,13 @@ function renderMap() {
   tabs.addEventListener("click", e => {
     const b = e.target.closest(".map__tab");
     if (!b) return;
+    const previousStore = stores[mapIdx]?.id || "";
     mapIdx = +b.dataset.idx;
     document.querySelectorAll(".map__tab").forEach((t, i) => t.classList.toggle("is-active", i === mapIdx));
+    emitAnalyticsEvent("map_tab_change", {
+      from_store_id: previousStore,
+      to_store_id: stores[mapIdx].id,
+    });
     updateMap();
   });
   updateMap();
@@ -370,8 +541,17 @@ function updateMap() {
     <div class="map__ref">${s.reference}</div>
   `;
   document.getElementById("map-iframe").src = s.embed;
-  document.getElementById("map-route").href = s.mapsUrl;
-  document.getElementById("map-wpp").href = s.whatsapp;
+  const routeBtn = document.getElementById("map-route");
+  routeBtn.href = s.mapsUrl;
+  routeBtn.dataset.trackEvent = "map_route_click";
+  routeBtn.dataset.trackSource = "map_actions";
+  routeBtn.dataset.trackStoreId = String(s.id);
+
+  const wppBtn = document.getElementById("map-wpp");
+  wppBtn.href = s.whatsapp;
+  wppBtn.dataset.trackEvent = "map_whatsapp_click";
+  wppBtn.dataset.trackSource = "map_actions";
+  wppBtn.dataset.trackStoreId = String(s.id);
 }
 
 /* ---------- 5. HOURS ---------- */
@@ -466,6 +646,11 @@ function renderStatus() {
 
 /* ---------- INIT ---------- */
 document.addEventListener("DOMContentLoaded", () => {
+  setupGTM();
+  setupGA4();
+  trackDatasetClickEvents();
+  emitAnalyticsEvent("page_view");
+
   enableRandomWhatsappRouting();
   // renderCats();
   renderOffer();
@@ -473,5 +658,12 @@ document.addEventListener("DOMContentLoaded", () => {
   renderMap();
   renderHours();
   renderStatus();
+
+  const instagramLink = document.querySelector('.social[href*="instagram.com"]');
+  if (instagramLink) {
+    instagramLink.dataset.trackEvent = "instagram_click";
+    instagramLink.dataset.trackSource = "social_card";
+  }
+
   document.getElementById("foot-year").textContent = new Date().getFullYear();
 });
