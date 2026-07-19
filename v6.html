@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Arimar Utilidades · Tudo para o seu lar</title>
+    <meta
+      name="description"
+      content="Vitrine da Arimar Utilidades em Russas-CE: utilidades para casa, cozinha e presentes. Veja as ofertas da semana e peça pelo WhatsApp."
+    />
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap"
+    />
+    <link rel="stylesheet" href="styles-vitrine.css" />
+  </head>
+  <body>
+    <main class="page">
+      <!-- ============ HERO ============ -->
+      <header class="hero">
+        <div class="hero__chip">
+          <span class="hero__dot"></span>
+          RUSSAS · CE · 3 LOJAS
+        </div>
+
+        <div class="hero__logo-wrap">
+          <div class="hero__logo-ring" aria-hidden="true"></div>
+          <img
+            src="assets/logo.svg"
+            alt="Logo Arimar Utilidades"
+            class="hero__logo"
+          />
+        </div>
+
+        <h1 class="hero__title">
+          Arimar <span class="hero__title-accent">Utilidades</span>
+        </h1>
+
+        <p class="hero__slogan">Tudo para o seu lar</p>
+
+        <div class="hero__status" id="hero-status">
+          <span class="hero__status-pulse"></span>
+          <strong id="hero-status-label">Aberto agora</strong>
+          <span class="hero__status-sep">·</span>
+          <span id="hero-status-hours">fecha às 18h</span>
+        </div>
+      </header>
+
+      <!-- ============ LOJAS ============ -->
+      <section class="stores" aria-labelledby="stores-title">
+        <div class="section-head">
+          <h2 class="section-head__title" id="stores-title">
+            Fale com a loja mais perto
+          </h2>
+          <p class="section-head__sub">
+            Três lojas no centro de Russas, cada uma com seu WhatsApp.
+          </p>
+        </div>
+
+        <div class="stores__list" id="stores-list">
+          <!-- injetado pelo JS -->
+        </div>
+      </section>
+
+      <!-- ============ VITRINE ============ -->
+      <section class="vitrine" aria-labelledby="vitrine-title">
+        <!-- Toldo listrado: assinatura visual da vitrine -->
+        <div class="toldo" aria-hidden="true"></div>
+
+        <div class="vitrine__janela">
+          <div class="vitrine__head">
+            <span class="vitrine__eyebrow">chegou na loja</span>
+            <h2 class="vitrine__title" id="vitrine-title">Vitrine da semana</h2>
+            <p class="vitrine__sub">
+              Chama no WhatsApp que a gente separa o seu.
+            </p>
+          </div>
+
+          <div class="vitrine__shelf" id="vitrine-shelf">
+            <!-- produtos injetados pelo JS -->
+          </div>
+
+          <!-- Pedido fora da vitrine -->
+          <div class="procura">
+            <p class="procura__note">Não achou o que procurava?</p>
+            <p class="procura__text">
+              A loja tem muito mais do que cabe na vitrine. Diga o que você
+              precisa e a gente encontra.
+            </p>
+            <a
+              class="procura__btn"
+              href="https://wa.me/558896223840?text=Ol%C3%A1!%20Estou%20procurando%20um%20produto."
+              target="_blank"
+              rel="noopener"
+              data-wa-msg="Olá! Estou procurando um produto."
+              data-track-event="search_whatsapp_click"
+              data-track-source="procura_card"
+            >
+              Perguntar no WhatsApp
+              <svg
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M5 12h14M13 5l7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ MAPA ============ -->
+      <section class="map" aria-labelledby="map-title">
+        <div class="section-head">
+          <h2 class="section-head__title" id="map-title">Como chegar</h2>
+        </div>
+
+        <div class="map__card">
+          <div class="map__tabs" id="map-tabs"></div>
+          <div class="map__info" id="map-info"></div>
+          <div class="map__frame">
+            <iframe
+              id="map-iframe"
+              title="Localização da loja"
+              loading="lazy"
+              allowfullscreen
+              referrerpolicy="no-referrer-when-downgrade"
+            ></iframe>
+          </div>
+          <div class="map__actions">
+            <a
+              class="map__btn map__btn--route"
+              id="map-route"
+              target="_blank"
+              rel="noopener"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.4"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polygon points="3 11 22 2 13 21 11 13 3 11" />
+              </svg>
+              Traçar rota
+            </a>
+            <a
+              class="map__btn map__btn--wpp"
+              id="map-wpp"
+              target="_blank"
+              rel="noopener"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="currentColor"
+              >
+                <path
+                  d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.3-.1-.4-.1-.6.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-1.7-.9-2.9-1.6-4.1-3.5-.3-.6.3-.5.9-1.7.1-.2 0-.4 0-.5 0-.1-.6-1.5-.9-2-.2-.5-.5-.5-.6-.5h-.6c-.2 0-.5.1-.7.3-.3.3-1 .9-1 2.3 0 1.4 1 2.7 1.1 2.9.1.2 2 3 4.8 4.2 1.8.7 2.4.8 3.3.7.6-.1 1.6-.7 1.9-1.3.2-.6.2-1.2.2-1.3-.1-.1-.3-.2-.6-.3zM12 2C6.5 2 2 6.5 2 12c0 1.7.5 3.4 1.3 4.8L2 22l5.3-1.4c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18c-1.5 0-3-.4-4.3-1.1l-.3-.2-3.1.8.8-3-.2-.3C4.3 14.9 4 13.5 4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8z"
+                />
+              </svg>
+              Falar
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ HORÁRIO ============ -->
+      <section class="hours" aria-labelledby="hours-title">
+        <div class="section-head">
+          <h2 class="section-head__title" id="hours-title">
+            Horário de funcionamento
+          </h2>
+        </div>
+        <div class="hours__card" id="hours-card"></div>
+      </section>
+
+      <!-- ============ INSTAGRAM ============ -->
+      <section class="storefront">
+        <a
+          class="social"
+          href="https://www.instagram.com/arimar.utilidades"
+          target="_blank"
+          rel="noopener"
+        >
+          <div class="social__icon" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              width="22"
+              height="22"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="2" y="2" width="20" height="20" rx="5" />
+              <circle cx="12" cy="12" r="4" />
+              <circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" />
+            </svg>
+          </div>
+          <div class="social__text">
+            <div class="social__handle">@arimar.utilidades</div>
+            <div class="social__desc">As novidades chegam primeiro lá</div>
+          </div>
+          <svg
+            class="social__arrow"
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M7 17L17 7M9 7h8v8" />
+          </svg>
+        </a>
+      </section>
+
+      <!-- ============ FOOTER ============ -->
+      <footer class="foot">
+        <div class="foot__logo">
+          <img src="assets/logo.svg" alt="" />
+        </div>
+        <div class="foot__copy">
+          © <span id="foot-year"></span> Arimar Utilidades<br />
+          Russas · Ceará · Brasil
+        </div>
+        <div class="foot__line"></div>
+        <div class="foot__sign">FEITO COM CARINHO PARA O SEU LAR</div>
+      </footer>
+    </main>
+
+    <!-- ============ FICHA DO PRODUTO (bottom sheet) ============ -->
+    <div class="sheet" id="product-sheet" hidden>
+      <div class="sheet__backdrop" id="sheet-backdrop"></div>
+      <div
+        class="sheet__panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="sheet-name"
+      >
+        <button
+          class="sheet__close"
+          id="sheet-close"
+          aria-label="Fechar detalhes do produto"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+          >
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+        <div class="sheet__grip" aria-hidden="true"></div>
+        <div class="sheet__scroll">
+          <div class="sheet__media">
+            <img id="sheet-image" src="" alt="" />
+            <span class="sheet__badge" id="sheet-badge" hidden></span>
+          </div>
+          <div class="sheet__body">
+            <span class="sheet__note" id="sheet-note" hidden></span>
+            <h3 class="sheet__name" id="sheet-name"></h3>
+            <p class="sheet__desc" id="sheet-desc"></p>
+            <ul class="sheet__details" id="sheet-details"></ul>
+            <div class="sheet__footer">
+              <div class="etiqueta etiqueta--sheet" id="sheet-price">
+                <!-- preço injetado pelo JS -->
+              </div>
+              <a
+                class="sheet__buy"
+                id="sheet-buy"
+                href="#"
+                target="_blank"
+                rel="noopener"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="18"
+                  height="18"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.3-.1-.4-.1-.6.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-1.7-.9-2.9-1.6-4.1-3.5-.3-.6.3-.5.9-1.7.1-.2 0-.4 0-.5 0-.1-.6-1.5-.9-2-.2-.5-.5-.5-.6-.5h-.6c-.2 0-.5.1-.7.3-.3.3-1 .9-1 2.3 0 1.4 1 2.7 1.1 2.9.1.2 2 3 4.8 4.2 1.8.7 2.4.8 3.3.7.6-.1 1.6-.7 1.9-1.3.2-.6.2-1.2.2-1.3-.1-.1-.3-.2-.6-.3zM12 2C6.5 2 2 6.5 2 12c0 1.7.5 3.4 1.3 4.8L2 22l5.3-1.4c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18c-1.5 0-3-.4-4.3-1.1l-.3-.2-3.1.8.8-3-.2-.3C4.3 14.9 4 13.5 4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8z"
+                  />
+                </svg>
+                Pedir no WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="app-vitrine.js"></script>
+  </body>
+</html>
