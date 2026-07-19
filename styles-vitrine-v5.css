@@ -1266,6 +1266,11 @@ body.sheet-open { overflow: hidden; }
 
 .vitrine__track {
   overflow: hidden;
+  /* Sangria lateral: o track alarga 10px para cada lado e o slide devolve
+     esse espaço como padding. Assim o card fica na largura cheia da janela
+     (igual à listagem sem carrossel) e a prateleira, que passa 8px do card,
+     não é cortada pelo overflow. */
+  margin: 0 -10px;
   /* respiro para a prateleira e a sombra do card aparecerem */
   padding-bottom: 26px;
 }
@@ -1324,10 +1329,10 @@ body.sheet-open { overflow: hidden; }
 }
 
 .vitrine__nav:hover { background: var(--laranja); color: #fff; }
-/* O card fica 10px para dentro do viewport (padding do slide);
-   -9px deixa a seta com o centro exatamente na borda do card. */
-.vitrine__nav--prev { left: -9px; }
-.vitrine__nav--next { right: -9px; }
+/* A borda do card coincide com a do viewport; -19px (metade dos 38px
+   da seta) deixa o centro dela exatamente sobre a borda do card. */
+.vitrine__nav--prev { left: -19px; }
+.vitrine__nav--next { right: -19px; }
 
 /* Dots — abaixo da prateleira */
 .vitrine__dots {
