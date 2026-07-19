@@ -263,7 +263,8 @@ function enableRandomWhatsappRouting() {
    VITRINE — carrossel de produtos
    (mesma lógica do carrossel de ofertas do index)
 ===================================================== */
-let vitrineIdx = 0;
+let vitrineIdx = 0; // índice lógico do produto (0..n-1)
+let vitrinePos = 1; // posição física nos slides (há clones nas duas pontas)
 let vitrineAutoplayTimer = null;
 const VITRINE_AUTOPLAY_MS = 5000;
 function getProductMessage(product) {
@@ -315,7 +316,9 @@ function stopVitrineAutoplay() {
 }
 
 function setVitrineIndex(index, { resetAutoplay = true, interaction = "dot" } = {}) {
+  normalizeVitrinePos();
   vitrineIdx = (index + products.length) % products.length;
+  vitrinePos = vitrineIdx + 1;
   updateVitrine();
   emitAnalyticsEvent("vitrine_slide_view", {
     offer_name: products[vitrineIdx].name,
@@ -329,7 +332,9 @@ function setVitrineIndex(index, { resetAutoplay = true, interaction = "dot" } = 
 }
 
 function stepVitrine(step, { resetAutoplay = true, interaction = "navigation" } = {}) {
+  normalizeVitrinePos();
   vitrineIdx = (vitrineIdx + step + products.length) % products.length;
+  vitrinePos += step; // pode cair num clone (0 ou n+1); o salto acontece após a transição
   updateVitrine();
   emitAnalyticsEvent("vitrine_slide_view", {
     offer_name: products[vitrineIdx].name,
@@ -342,9 +347,27 @@ function stepVitrine(step, { resetAutoplay = true, interaction = "navigation" } 
   }
 }
 
+function applyVitrineTransform() {
+  document.getElementById("vitrine-slides").style.transform = `translateX(-${vitrinePos * 100}%)`;
+}
+
 function updateVitrine() {
-  document.getElementById("vitrine-slides").style.transform = `translateX(-${vitrineIdx * 100}%)`;
+  applyVitrineTransform();
   document.querySelectorAll(".vitrine__dot").forEach((d, i) => d.classList.toggle("is-active", i === vitrineIdx));
+}
+
+// Quando a transição termina sobre um clone, salta (sem animação) para o
+// slide real equivalente — é isso que fecha o circuito do carrossel.
+function normalizeVitrinePos() {
+  const lastPos = products.length;
+  if (vitrinePos !== 0 && vitrinePos !== lastPos + 1) return;
+
+  vitrinePos = vitrinePos === 0 ? lastPos : 1;
+  const slidesEl = document.getElementById("vitrine-slides");
+  slidesEl.style.transition = "none";
+  applyVitrineTransform();
+  void slidesEl.offsetWidth; // força reflow antes de reativar a transição
+  slidesEl.style.transition = "";
 }
 
 function enableVitrineSwipe() {
@@ -358,6 +381,7 @@ function enableVitrineSwipe() {
   let suppressClick = false;
 
   const onSwipeStart = x => {
+    normalizeVitrinePos(); // garante que o arrasto parte de um slide real
     startX = x;
     currentX = x;
     isSwiping = true;
@@ -375,7 +399,7 @@ function enableVitrineSwipe() {
       ev.preventDefault();
     }
 
-    slidesEl.style.transform = `translateX(calc(-${vitrineIdx * 100}% + ${deltaX}px))`;
+    slidesEl.style.transform = `translateX(calc(-${vitrinePos * 100}% + ${deltaX}px))`;
   };
 
   const onSwipeEnd = () => {
@@ -418,13 +442,13 @@ function renderVitrine() {
   const slidesEl = document.getElementById("vitrine-slides");
   const dotsEl = document.getElementById("vitrine-dots");
 
-  slidesEl.innerHTML = products.map((p, i) => {
+  const buildSlideHtml = (p, i, { clone = false } = {}) => {
     const badge = getProductBadge(p);
     return `
-      <div class="vitrine__slide">
+      <div class="vitrine__slide"${clone ? ` inert aria-hidden="true"` : ""}>
         <article class="produto" data-product-id="${p.id}">
           <div class="produto__media">
-            <img src="${p.image}" alt="${p.name}" loading="${i === 0 ? "eager" : "lazy"}" decoding="async">
+            <img src="${p.image}" alt="${p.name}" loading="${!clone && i === 0 ? "eager" : "lazy"}" decoding="async">
             ${badge ? `<span class="produto__badge">${badge}</span>` : ""}
           </div>
           <div class="produto__body">
@@ -453,9 +477,22 @@ function renderVitrine() {
         </article>
       </div>
     `;
-  }).join("");
+  };
+
+  // Clones do último e do primeiro nas pontas fecham o circuito:
+  // retroceder do primeiro mostra o último chegando, e vice-versa.
+  slidesEl.innerHTML = [
+    buildSlideHtml(products[products.length - 1], products.length - 1, { clone: true }),
+    ...products.map((p, i) => buildSlideHtml(p, i)),
+    buildSlideHtml(products[0], 0, { clone: true }),
+  ].join("");
 
   dotsEl.innerHTML = products.map((p, i) => `<button class="vitrine__dot${i === 0 ? " is-active" : ""}" data-idx="${i}" aria-label="Ir para ${p.name}"></button>`).join("");
+
+  slidesEl.addEventListener("transitionend", event => {
+    if (event.target !== slidesEl || event.propertyName !== "transform") return;
+    normalizeVitrinePos();
+  });
 
   slidesEl.addEventListener("click", event => {
     const btn = event.target.closest("[data-open-product]");
@@ -473,7 +510,12 @@ function renderVitrine() {
   });
 
   enableVitrineSwipe();
+
+  // Posiciona no primeiro slide real (após o clone) sem animar o carregamento.
+  slidesEl.style.transition = "none";
   updateVitrine();
+  void slidesEl.offsetWidth;
+  slidesEl.style.transition = "";
 
   emitAnalyticsEvent("vitrine_slide_view", {
     offer_name: products[vitrineIdx].name,

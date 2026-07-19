@@ -1258,8 +1258,13 @@ body.sheet-open { overflow: hidden; }
   touch-action: pan-y;
 }
 
+/* O overflow fica no track interno: assim as setas, que são filhas
+   do viewport, podem estourar o limite do card sem serem cortadas. */
 .vitrine__viewport {
   position: relative;
+}
+
+.vitrine__track {
   overflow: hidden;
   /* respiro para a prateleira e a sombra do card aparecerem */
   padding-bottom: 26px;
@@ -1298,10 +1303,12 @@ body.sheet-open { overflow: hidden; }
   padding-top: 18px;
 }
 
-/* Setas de navegação — sobre a foto do produto */
+/* Setas de navegação — sobrepostas, cavalgando a borda do card
+   (não ocupam espaço do card; metade dentro, metade fora) */
 .vitrine__nav {
   position: absolute;
-  top: 50%;
+  /* centraliza no card, descontando o respiro da prateleira (26px) */
+  top: calc(50% - 13px);
   transform: translateY(-50%);
   z-index: 2;
   width: 38px;
@@ -1317,8 +1324,10 @@ body.sheet-open { overflow: hidden; }
 }
 
 .vitrine__nav:hover { background: var(--laranja); color: #fff; }
-.vitrine__nav--prev { left: 2px; }
-.vitrine__nav--next { right: 2px; }
+/* O card fica 10px para dentro do viewport (padding do slide);
+   -9px deixa a seta com o centro exatamente na borda do card. */
+.vitrine__nav--prev { left: -9px; }
+.vitrine__nav--next { right: -9px; }
 
 /* Dots — abaixo da prateleira */
 .vitrine__dots {
