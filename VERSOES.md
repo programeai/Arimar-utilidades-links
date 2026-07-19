@@ -6,47 +6,43 @@ A versão publicada é sempre o `index.html` da raiz. As versões antigas ficam 
 
 | Versão | Arquivo | Estilo | Situação |
 |--------|---------|--------|----------|
-| v1 | `versions/v1.html` | Primeira versão (usa `styles.css`) | Arquivada |
-| v2 | `versions/v2.html` | Cabeçalho limpo, com card VIP (usa `styles.css`) | Arquivada |
-| v3 | `versions/v3.html` | Snapshot da versão ao ar em 07/2026 (usa `styles.css` + `app.js`) | **No ar** (é o `index.html` atual) |
-| v4 | `v4.html` | "Vitrine" — vitrine de produtos com detalhes (usa `styles-vitrine.css` + `app-vitrine.js`) | Em avaliação |
-| v5 | `v5.html` | "Vitrine Carrossel" — mesmo visual da v4, com os produtos em carrossel como no index (usa `styles-vitrine-v5.css` + `app-vitrine-v5.js`) | Em avaliação |
-| v6 | `v6.html` | Rascunho a partir da v4 (ainda usa `styles-vitrine.css` + `app-vitrine.js`, sem mudança funcional própria ainda) | Em avaliação |
+| v1 | `versions/v1.html` | Primeira versão (usa `styles.css` + `app.js`) | Arquivada |
+| v2 | `versions/v2.html` | Cabeçalho limpo, com card VIP (usa `styles.css` + `app.js`) | Arquivada |
+| v3 | `versions/v3.html` | Link in bio clássico (usa `styles.css` + `app.js`) | Arquivada |
+| v4 | `versions/v4.html` | "Vitrine" — vitrine de produtos com detalhes (usa `styles-vitrine.css` + `app-vitrine.js`) | Arquivada |
+| v5 | `index.html` | "Vitrine Carrossel" — vitrine de produtos em carrossel (usa `styles-vitrine-v5.css` + `app-vitrine-v5.js`) | **No ar** (é o `index.html` atual) |
+| v6 | — | Rascunho a partir da v4 (sem mudança funcional própria) | Excluída |
 
-## Como visualizar a v4 sem publicar
+> A v5 foi promovida a `index.html`. A v6 foi descartada. A v4 foi arquivada em `versions/v4.html` (com os caminhos ajustados para `../`).
 
-Localmente, abra `v4.html` no navegador. Depois de dar push, ela também fica acessível em:
+## Arquivos JS por versão
 
-```
-https://www.arimarutilidades.com.br/v4.html
-```
+- `app-vitrine-v5.js` — usado pelo `index.html` no ar (v5). **É aqui que se edita a loja hoje.**
+- `app-vitrine.js` — usado pela v4 arquivada (`versions/v4.html`).
+- `app.js` — usado pelas versões arquivadas v1/v2/v3.
 
-## Como publicar a v4
+Todos os três compartilham a mesma base de analytics (GTM `GTM-5FJ655S4` + GA4 `G-2YQXF3HYTL`). Ver [GTM-SETUP.md](GTM-SETUP.md).
 
-A v4 usa arquivos próprios (`styles-vitrine.css` e `app-vitrine.js`), então basta trocar o `index.html`:
+## Como editar os produtos (versão no ar)
+
+Os produtos da vitrine ficam no topo de `app-vitrine-v5.js`, no array `products`. Cada produto tem nome, anotação manuscrita (`note`), descrição curta (`desc`), descrição completa (`fullDesc`), lista de detalhes (`details`), preços e foto. O selo de desconto é calculado sozinho quando `fromPrice` é preenchido.
+
+## Como criar uma v6/v7 nova (rascunho)
+
+Para experimentar sem afetar o site no ar, crie um arquivo próprio na raiz (ex.: `v6.html`) apontando para seus próprios CSS/JS, e teste em `https://www.arimarutilidades.com.br/v6.html` depois do push. Ao aprovar, promova para `index.html`.
+
+## Como arquivar uma versão que sai do ar
+
+1. Mover o HTML para `versions/` (ex.: `git mv v4.html versions/v4.html`).
+2. Corrigir os caminhos relativos para subir um nível (o snapshot passa a viver dentro de `versions/`):
 
 ```bash
-cp v4.html index.html
+sed -i \
+  -e 's|href="assets/|href="../assets/|g' \
+  -e 's|href="styles|href="../styles|g' \
+  -e 's|src="assets/|src="../assets/|g' \
+  -e 's|src="app|src="../app|g' \
+  versions/v4.html
 ```
 
-Os arquivos `styles.css` e `app.js` continuam intactos, servindo as versões arquivadas.
-
-## Como voltar para a v3
-
-```bash
-sed -e 's|\.\./||g' versions/v3.html > index.html
-```
-
-(O `sed` só corrige os caminhos `../` do snapshot para a raiz.)
-
-## Como editar os produtos da v4
-
-Os produtos da vitrine ficam no topo de `app-vitrine.js`, no array `products`. Cada produto tem nome, anotação manuscrita (`note`), descrição curta (`desc`), descrição completa (`fullDesc`), lista de detalhes (`details`), preços e foto. O selo de desconto é calculado sozinho quando `fromPrice` é preenchido.
-
-## v5 — Vitrine Carrossel
-
-A v5 preserva todo o design da v4, mas troca a "prateleira" de cards empilhados por um carrossel de produtos com a mesma lógica do carrossel de ofertas do index: setas, dots, swipe no celular e autoplay a cada 5 segundos (pausado enquanto a ficha do produto está aberta).
-
-- Visualizar sem publicar: abra `v5.html` no navegador (ou `https://www.arimarutilidades.com.br/v5.html` depois do push).
-- Publicar: `cp v5.html index.html` (ela usa arquivos próprios, `styles-vitrine-v5.css` e `app-vitrine-v5.js`).
-- Editar produtos: mesmo esquema da v4, no array `products` no topo de `app-vitrine-v5.js`.
+Os arquivos de CSS/JS na raiz continuam intactos, servindo tanto o site no ar quanto as versões arquivadas.
