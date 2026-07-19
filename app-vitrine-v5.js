@@ -5,7 +5,16 @@
 ===================================================== */
 const WHATSAPP_DEFAULT = "558896223840";
 const WHATSAPP_STORES = ["558893491883", "558896145011", "558896223840"];
-const GTM_CONTAINER_ID = ""; // Ex.: GTM-XXXXXXX
+// Converte o número sorteado de volta no "número" da loja (Loja 1/2/3),
+// para que as métricas mostrem "produto X → Loja Y".
+const STORE_NUMBER_TO_ID = {
+  "558893491883": 1,
+  "558896145011": 2,
+  "558896223840": 3,
+};
+const GTM_CONTAINER_ID = "GTM-5FJ655S4";
+// O GA4 agora é carregado e disparado DENTRO do GTM (não é mais carregado
+// direto pela página). Este ID fica aqui só como referência p/ configurar o GTM.
 const GA4_MEASUREMENT_ID = "G-2YQXF3HYTL";
 const ANALYTICS_SESSION_KEY = "arimar_session_id";
 const ANALYTICS_ATTRIBUTION_KEY = "arimar_attribution";
@@ -135,28 +144,6 @@ function setupGTM() {
   document.head.appendChild(script);
 }
 
-function setupGA4() {
-  const id = GA4_MEASUREMENT_ID.trim();
-  if (!id) return;
-
-  window.dataLayer = window.dataLayer || [];
-  window.gtag = window.gtag || function gtag() {
-    window.dataLayer.push(arguments);
-  };
-
-  const script = document.createElement("script");
-  script.async = true;
-  script.src = `https://www.googletagmanager.com/gtag/js?id=${id}`;
-  document.head.appendChild(script);
-
-  window.gtag("js", new Date());
-  window.gtag("config", id, {
-    anonymize_ip: true,
-    transport_type: "beacon",
-    send_page_view: false,
-  });
-}
-
 function emitAnalyticsEvent(eventName, params = {}) {
   const attribution = getOrCreateAttributionContext();
   const payload = {
@@ -169,13 +156,10 @@ function emitAnalyticsEvent(eventName, params = {}) {
     ...params,
   };
 
+  // Fonte única: empurra tudo para o dataLayer. Quem encaminha para o GA4
+  // (ou Meta/Ads) é o GTM, através das tags configuradas no container.
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push(payload);
-
-  if (typeof window.gtag === "function") {
-    const { event, ...gaParams } = payload;
-    window.gtag("event", eventName, gaParams);
-  }
 }
 
 function trackDatasetClickEvents() {
@@ -241,7 +225,8 @@ const whatsappRouter = (() => {
   }
 
   function buildRandomUrl(msg) {
-    return buildWhatsAppUrl(pickNextNumber(), msg);
+    const number = pickNextNumber();
+    return { url: buildWhatsAppUrl(number, msg), number };
   }
 
   return { buildRandomUrl };
@@ -255,7 +240,20 @@ function enableRandomWhatsappRouting() {
     const msg = link.dataset.waMsg;
     if (!msg) return;
 
-    link.href = whatsappRouter.buildRandomUrl(msg);
+    const { url, number } = whatsappRouter.buildRandomUrl(msg);
+    link.href = url;
+
+    // ESTE é o evento-chave: liga o produto/oferta clicado à loja sorteada.
+    // Só dispara para links de produto/oferta/categoria (que têm data-wa-msg
+    // e passam pelo sorteio) — os cards de loja vão direto e não caem aqui.
+    emitAnalyticsEvent("product_store_redirect", {
+      source: link.dataset.trackSource || "whatsapp",
+      product_name: link.dataset.trackOfferName || link.dataset.trackCategoryName || "",
+      product_id: link.closest("[data-product-id]")?.dataset.productId || "",
+      category_name: link.dataset.trackCategoryName || "",
+      store_id: STORE_NUMBER_TO_ID[number] || "",
+      store_number: number,
+    });
   });
 }
 
@@ -826,7 +824,6 @@ function setupReveal() {
 ===================================================== */
 document.addEventListener("DOMContentLoaded", () => {
   setupGTM();
-  setupGA4();
   trackDatasetClickEvents();
   emitAnalyticsEvent("page_view");
 
